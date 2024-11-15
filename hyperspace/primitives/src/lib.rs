@@ -509,6 +509,14 @@ pub trait IbcProvider {
 	) -> Result<(ChannelId, PortId), Self::Error>;
 
 	async fn upload_wasm(&self, wasm: Vec<u8>) -> Result<Vec<u8>, Self::Error>;
+
+	async fn fast_proof_search(
+		&self,
+		_client_id: ClientId,
+		_delay_period: Duration,
+	) -> Option<Height> {
+		None
+	}
 }
 
 /// Provides an interface that allows us run the hyperspace-testsuite
@@ -761,6 +769,7 @@ pub async fn find_suitable_proof_height_for_client(
 	height_to_match: Option<Height>,
 	timestamp_to_match: Option<Timestamp>,
 	latest_client_height: Height,
+	source_delay_period: Duration,
 ) -> Option<Height> {
 	log::info!(
 		target: "hyperspace",
@@ -768,6 +777,12 @@ pub async fn find_suitable_proof_height_for_client(
 		client_id, sink.name(), start_height, timestamp_to_match, latest_client_height
 	);
 	let start_height = source.get_proof_height(start_height).await;
+
+	if let Some(proof_height) = sink.fast_proof_search(client_id.clone(), source_delay_period).await
+	{
+		info!("Fast proof search found proof height on {} as {}", sink.name(), proof_height);
+		return Some(proof_height)
+	}
 
 	// We use pure linear search because there's no valid comparison to be made and there might be
 	// missing values  for some heights
@@ -777,6 +792,7 @@ pub async fn find_suitable_proof_height_for_client(
 		if sink
 			.query_client_update_time_and_height(client_id.clone(), temp_height)
 			.await
+			.map_err(|e| log::error!("Error querying client update time and height: {}", e))
 			.ok()
 			.is_none()
 		{
@@ -784,7 +800,8 @@ pub async fn find_suitable_proof_height_for_client(
 		}
 
 		let consensus_state =
-			sink.query_client_consensus(at, client_id.clone(), temp_height).await.ok();
+			sink.query_client_consensus(at, client_id.clone(), temp_height).await.map_err(|e| log::error!("Error querying consensus state: {}", e))
+			.ok();
 		let decoded = consensus_state
 			.map(|x| x.consensus_state.map(AnyConsensusState::try_from))
 			.flatten();

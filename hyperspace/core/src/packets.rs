@@ -248,6 +248,7 @@ pub async fn query_ready_and_timed_out_packets(
 								latest_sink_height_on_source,
 								&packet,
 								packet_height,
+								source_connection_end.delay_period(),
 							)
 							.await
 						{
@@ -326,6 +327,7 @@ pub async fn query_ready_and_timed_out_packets(
 						Some(start_height),
 						None,
 						latest_source_height_on_sink,
+						source_connection_end.delay_period(),
 					)
 						.await
 					{
@@ -455,6 +457,7 @@ pub async fn query_ready_and_timed_out_packets(
 						Some(start_height),
 						None,
 						latest_source_height_on_sink,
+						source_connection_end.delay_period()
 					)
 						.await
 					{

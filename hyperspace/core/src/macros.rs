@@ -645,6 +645,20 @@ macro_rules! chains {
 				}
 			}
 
+			async fn fast_proof_search(
+				&self,
+				client_id: ClientId,
+				delay_period: Duration,
+			) -> Option<Height> {
+				match self {
+					$(
+						$(#[$($meta)*])*
+						Self::$name(chain) => chain.fast_proof_search(client_id, delay_period).await,
+					)*
+					Self::Wasm(c) => c.inner.fast_proof_search(client_id, delay_period).await,
+				}
+			}
+
 			async fn query_connection_id_from_tx_hash(
 				&self,
 				tx_id: Self::TransactionId,

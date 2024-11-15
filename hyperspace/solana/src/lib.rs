@@ -1805,6 +1805,59 @@ deserialize client state"
 	async fn upload_wasm(&self, _wasm: Vec<u8>) -> Result<Vec<u8>, Self::Error> {
 		todo!()
 	}
+
+	async fn fast_proof_search(
+		&self,
+		client_id: ClientId,
+		source_delay_period: Duration,
+	) -> Option<Height> {
+		log::info!(
+			"Fast proof search for client_id: {}, source_delay_period: {:?}",
+			client_id,
+			source_delay_period
+		);
+
+		// Convert source_delay_period to seconds as a float
+		let source_delay_secs = source_delay_period.as_secs_f64();
+
+		// Build the SQL query
+		let sql = r#"
+            SELECT revision_number, revision_height
+            FROM consensus_states
+            WHERE client_id = $1
+              AND client_update_time <= NOW() - ($2 * INTERVAL '1 second')
+            ORDER BY revision_number DESC, revision_height DESC
+            LIMIT 1
+        "#;
+
+		// Prepare the query with parameter binding
+		let query = sqlx::query(sql).bind(client_id.as_str()).bind(source_delay_secs);
+
+		// Execute the query using `self.query(..)`
+		let rows = self.query(query).await.ok()?;
+
+		// Process the result
+		if let Some(row) = rows.into_iter().next() {
+			// Extract the revision_number and revision_height
+			let revision_number: i64 = row.get("revision_number");
+			let revision_height: i64 = row.get("revision_height");
+
+			log::info!(
+				"Fast proof search found matching consensus state: revision_number={}, revision_height={}",
+				revision_number,
+				revision_height
+			);
+			// Construct the Height object to return
+			Some(Height {
+				revision_number: revision_number.try_into().ok()?,
+				revision_height: revision_height.try_into().ok()?,
+			})
+		} else {
+			log::info!("No matching consensus state found");
+			// No matching consensus state found
+			None
+		}
+	}
 }
 
 impl KeyProvider for SolanaClient {
