@@ -26,6 +26,7 @@ itertools = "0.10.3"
 prost = { version = "0.11" }
 k256 = { version = "0.11.6", features = ["ecdsa-core", "ecdsa", "sha256"] }
 tonic = { version = "0.8", features = ["tls", "tls-roots"] }
+tonic_0_10 = { package = "tonic", version = "0.10.2" }
 bech32 = "0.9.1"
 bip32 = "0.4.0"
 ed25519-zebra = { version = "3.1.0" }

@@ -5693,6 +5693,7 @@ dependencies = [
  "tiny-bip39 1.0.0",
  "tokio",
  "tokio-stream",
+ "tonic 0.10.2",
  "tonic 0.8.3",
  "tracing",
  "trie-ids",

@@ -256,7 +256,7 @@ impl SolanaClient {
 		&self,
 		at: u64,
 		require_proof: bool,
-	) -> (solana_trie::TrieAccount<Vec<u8>>, bool) {
+	) -> Result<(solana_trie::TrieAccount<Vec<u8>>, bool), Error> {
 		let connection = self.get_db();
 		if require_proof {
 			let row = connection.query_row("SELECT * FROM Trie WHERE height=?1", [at], |row| {
@@ -271,10 +271,10 @@ impl SolanaClient {
 			if let Ok(trie) = row {
 				log::info!("Does block state roots match {}", trie.match_block_state_root);
 				if trie.match_block_state_root {
-					return (
+					return Ok((
 						solana_trie::TrieAccount::new(trie.data).unwrap(),
 						trie.match_block_state_root,
-					);
+					));
 				}
 			}
 		}
@@ -282,29 +282,28 @@ impl SolanaClient {
 		let rpc_client = self.rpc_client();
 		let trie_account = rpc_client
 			.get_account_with_commitment(&trie_key, CommitmentConfig::processed())
-			.await
-			.unwrap()
+			.await?
 			.value
 			.unwrap();
 		let trie = solana_trie::TrieAccount::new(trie_account.data).unwrap();
-		(trie, false)
+		Ok((trie, false))
 	}
 
-	pub async fn get_ibc_storage(&self) -> PrivateStorage {
+	pub async fn get_ibc_storage(&self) -> Result<PrivateStorage, Error> {
 		let program = self.program();
 		let ibc_storage_key = self.get_ibc_storage_key();
-		let storage: PrivateStorage = program.account(ibc_storage_key).await.unwrap();
+		let storage: PrivateStorage = program.account(ibc_storage_key).await?;
 		// let storage = tokio::task::spawn_blocking(move || {
 		// 	program.account(ibc_storage_key).unwrap()
 		// }).await.unwrap();
-		storage
+		Ok(storage)
 	}
 
-	pub async fn get_chain_storage(&self) -> ChainData {
+	pub async fn get_chain_storage(&self) -> Result<ChainData, Error> {
 		let program = self.program();
 		let chain_storage_key = self.get_chain_key();
-		let storage = program.account(chain_storage_key).await.unwrap();
-		storage
+		let storage = program.account(chain_storage_key).await?;
+		Ok(storage)
 	}
 
 	pub fn rpc_client(&self) -> AsyncRpcClient {
@@ -434,7 +433,7 @@ impl SolanaClient {
 				let header =
 					ibc_client_tendermint_types::Header::try_from(client_message.clone()).unwrap();
 				let trusted_state = {
-					let storage = self.get_ibc_storage().await;
+					let storage = self.get_ibc_storage().await?;
 					log::info!("This is client ID {:?}", client_id);
 					let client_store = storage
 							.clients

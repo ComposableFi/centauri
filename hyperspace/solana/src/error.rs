@@ -1,3 +1,4 @@
+use anchor_client::solana_sdk::signature::ParseSignatureError;
 use ibc::timestamp::ParseTimestampError;
 use prost::DecodeError;
 
@@ -37,6 +38,18 @@ pub enum Error {
 	/// SQLx error
 	#[error("SQLx error: {0}")]
 	SQLxError(#[from] sqlx::Error),
+	/// Anchor error
+	#[error("Anchor client error: {0}")]
+	AnchorError(#[from] anchor_client::ClientError),
+	/// Anchor error
+	#[error("Solana client client error: {0}")]
+	SolanaClientError(#[from] anchor_client::solana_client::client_error::ClientError),
+	/// Tonic Status error
+	#[error("Tonic status error: {0}")]
+	TonicStatusError(#[from] tonic_0_10::Status),
+	/// Parse signature error
+	#[error("Parse signature error: {0}")]
+	ParseSignatureError(#[from] ParseSignatureError),
 }
 
 impl From<String> for Error {

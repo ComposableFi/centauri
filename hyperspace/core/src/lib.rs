@@ -380,7 +380,7 @@ async fn process_updates<A: Chain, B: Chain>(
 	// 	if height_is_greater {
 	// 		loop {
 	// 			let largest_height = timeout_heights.iter().max().unwrap();
-	// 			let latest_height_on_solana = source.latest_height_and_timestamp().await.unwrap().0;
+	// 			let latest_height_on_solana = source.latest_height_and_timestamp().await?.0;
 	// 			log::info!(
 	// 				"This is the largest height {:?} {:?}",
 	// 				largest_height,
@@ -394,7 +394,7 @@ async fn process_updates<A: Chain, B: Chain>(
 	// 			log::info!("Waiting for next block {:?} to be finalized", latest_height_on_solana);
 	// 			std::thread::sleep(core::time::Duration::from_secs(1));
 	// 		}
-	// 		let (mandatory_updates, heights) = source.fetch_mandatory_updates(sink).await.unwrap();
+	// 		let (mandatory_updates, heights) = source.fetch_mandatory_updates(sink).await?;
 	// 		// log::info!("Height is greater than timeout height {:?}", );
 	// 		log::info!("These are heights {:?}", heights);
 	// 		let updates_to_be_sent: Vec<Any> = heights
