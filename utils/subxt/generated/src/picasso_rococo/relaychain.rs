@@ -2623,7 +2623,8 @@ pub mod api {
 				}
 				pub fn block_length(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::frame_system::limits::BlockLength> {
+				) -> ::subxt::constants::Address<runtime_types::frame_system::limits::BlockLength>
+				{
 					::subxt::constants::Address::new_static(
 						"System",
 						"BlockLength",
@@ -10293,7 +10294,8 @@ pub mod api {
 				}
 				pub fn proposal_bond_maximum(
 					&self,
-				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>> {
+				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>>
+				{
 					::subxt::constants::Address::new_static(
 						"Treasury",
 						"ProposalBondMaximum",
@@ -17055,7 +17057,8 @@ pub mod api {
 				}
 				pub fn curator_deposit_max(
 					&self,
-				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>> {
+				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>>
+				{
 					::subxt::constants::Address::new_static(
 						"Bounties",
 						"CuratorDepositMax",
@@ -17069,7 +17072,8 @@ pub mod api {
 				}
 				pub fn curator_deposit_min(
 					&self,
-				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>> {
+				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>>
+				{
 					::subxt::constants::Address::new_static(
 						"Bounties",
 						"CuratorDepositMin",
@@ -18781,7 +18785,8 @@ pub mod api {
 				}
 				pub fn hold_reason(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::rococo_runtime::RuntimeHoldReason> {
+				) -> ::subxt::constants::Address<runtime_types::rococo_runtime::RuntimeHoldReason>
+				{
 					::subxt::constants::Address::new_static(
 						"Nis",
 						"HoldReason",

@@ -5,14 +5,14 @@ extern crate alloc;
 extern crate std;
 
 pub mod client;
-pub mod proto;
+pub mod client_def;
+mod client_impls;
+pub mod consensus;
 mod error;
 pub mod header;
-pub mod client_def;
-pub mod consensus;
 pub mod message;
 mod misbehaviour;
-mod client_impls;
+pub mod proto;
 
 use alloc::string::ToString;
 // pub use client::impls::{CommonContext, Neighbourhood};

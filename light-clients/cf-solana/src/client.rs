@@ -1,13 +1,12 @@
 use core::num::NonZeroU64;
 
-use crate::{client_def::SolanaClient, CLIENT_TYPE};
+use crate::{client_def::SolanaClient, error::Error, CLIENT_TYPE};
 use alloc::string::{String, ToString};
 use ibc::{
 	core::{ics02_client::height::Height, ics24_host::identifier::ClientId},
 	timestamp::Timestamp,
 };
 use serde::{Deserialize, Serialize};
-use crate::error::Error;
 
 super::wrap!(cf_solana_upstream::ClientState as ClientState);
 super::wrap!(impl proto for ClientState);
@@ -64,8 +63,7 @@ impl ClientState {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UpgradeOptions {}
 
-impl ibc::core::ics02_client::client_state::ClientState for ClientState
-{
+impl ibc::core::ics02_client::client_state::ClientState for ClientState {
 	type UpgradeOptions = UpgradeOptions;
 
 	type ClientDef = SolanaClient;

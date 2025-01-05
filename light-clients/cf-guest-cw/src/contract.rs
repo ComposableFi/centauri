@@ -154,15 +154,9 @@ fn process_message(
 			// )?;
 			let consensus_state = ctx.consensus_state(&client_id, msg.height)?;
 
-			verify(
-				&CommitmentPrefix::default(),
-				&msg.proof,
-				consensus_state.root(),
-				msg.path,
-				None,
-			)
-			.map_err(ContractError::from)
-			.map(|_| to_binary(&ContractResult::success()))
+			verify(&CommitmentPrefix::default(), &msg.proof, consensus_state.root(), msg.path, None)
+				.map_err(ContractError::from)
+				.map(|_| to_binary(&ContractResult::success()))
 		},
 		// ExecuteMsg::VerifyClientMessage(msg) => {
 		// 	let client_state = ctx.client_state(&client_id)?;
@@ -260,7 +254,6 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 	match msg {
 		// QueryMsg::ClientTypeMsg(_) => unimplemented!("ClientTypeMsg"),
 		// QueryMsg::GetLatestHeightsMsg(_) => unimplemented!("GetLatestHeightsMsg"),
-
 		QueryMsg::ExportMetadata(ExportMetadataMsg {}) => {
 			let ro_proceeded_state = ReadonlyProcessedStates::new(deps.storage);
 			to_binary(&QueryResponse::success().genesis_metadata(ro_proceeded_state.get_metadata()))

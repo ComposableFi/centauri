@@ -41,13 +41,12 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 		.iter()
 		.map(|message| match message {
 			Ics26Envelope::Ics2Msg(msg) => match msg {
-				ibc::core::ics02_client::msgs::ClientMsg::CreateClient(e) => {
+				ibc::core::ics02_client::msgs::ClientMsg::CreateClient(e) =>
 					MsgEnvelope::Client(ClientMsg::CreateClient(MsgCreateClient::new(
 						convert_old_client_state_to_new(e.client_state.clone()).into(),
 						convert_old_consensus_state_to_new(e.consensus_state.clone()).into(),
 						Signer::from(e.signer.as_ref().to_string()),
-					)))
-				},
+					))),
 				ibc::core::ics02_client::msgs::ClientMsg::UpdateClient(e) => {
 					let header = match &e.client_message {
 						pallet_ibc::light_clients::AnyClientMessage::Tendermint(msg) => {
@@ -67,7 +66,7 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						signer: Signer::from(e.signer.as_ref().to_string()),
 					}))
 				},
-				ibc::core::ics02_client::msgs::ClientMsg::UpgradeClient(e) => {
+				ibc::core::ics02_client::msgs::ClientMsg::UpgradeClient(e) =>
 					MsgEnvelope::Client(ClientMsg::UpgradeClient(MsgUpgradeClient {
 						client_id: ClientId::from_str(e.client_id.as_str()).unwrap(),
 						upgraded_client_state: convert_old_client_state_to_new(
@@ -87,11 +86,10 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						)
 						.unwrap(),
 						signer: Signer::from(e.signer.as_ref().to_string()),
-					}))
-				},
+					})),
 			},
 			Ics26Envelope::Ics3Msg(msg) => match msg {
-				ibc::core::ics03_connection::msgs::ConnectionMsg::ConnectionOpenInit(e) => {
+				ibc::core::ics03_connection::msgs::ConnectionMsg::ConnectionOpenInit(e) =>
 					MsgEnvelope::Connection(ConnectionMsg::OpenInit(MsgConnectionOpenInit {
 						client_id_on_a: ClientId::from_str(e.client_id.as_str()).unwrap(),
 						counterparty: Counterparty {
@@ -119,8 +117,7 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						}),
 						delay_period: e.delay_period,
 						signer: Signer::from(e.signer.as_ref().to_string()),
-					}))
-				},
+					})),
 				#[allow(deprecated)]
 				ibc::core::ics03_connection::msgs::ConnectionMsg::ConnectionOpenTry(e) => {
 					let encoded_cs = ibc_proto::google::protobuf::Any::from(
@@ -259,7 +256,7 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						},
 					}))
 				},
-				ibc::core::ics03_connection::msgs::ConnectionMsg::ConnectionOpenConfirm(e) => {
+				ibc::core::ics03_connection::msgs::ConnectionMsg::ConnectionOpenConfirm(e) =>
 					MsgEnvelope::Connection(ConnectionMsg::OpenConfirm(MsgConnectionOpenConfirm {
 						signer: Signer::from(e.signer.as_ref().to_string()),
 						conn_id_on_b: ConnectionId::from_str(e.connection_id.as_str()).unwrap(),
@@ -272,11 +269,10 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 							e.proofs.height().revision_height,
 						)
 						.unwrap(),
-					}))
-				},
+					})),
 			},
 			Ics26Envelope::Ics4ChannelMsg(msg) => match msg {
-				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenInit(e) => {
+				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenInit(e) =>
 					MsgEnvelope::Channel(ChannelMsg::OpenInit(MsgChannelOpenInit {
 						port_id_on_a: PortId::from_str(e.port_id.as_str()).unwrap(),
 						connection_hops_on_a: e
@@ -293,10 +289,9 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						signer: Signer::from(e.signer.as_ref().to_string()),
 						version_proposal: ChanVersion::from_str(&e.channel.version.to_string())
 							.unwrap(),
-					}))
-				},
+					})),
 				#[allow(deprecated)]
-				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenTry(e) => {
+				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenTry(e) =>
 					MsgEnvelope::Channel(ChannelMsg::OpenTry(MsgChannelOpenTry {
 						port_id_on_b: PortId::from_str(e.port_id.as_str()).unwrap(),
 						connection_hops_on_b: e
@@ -329,9 +324,8 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						signer: Signer::from(e.signer.as_ref().to_string()),
 						version_proposal: ChanVersion::from_str(&e.channel.version.to_string())
 							.unwrap(),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenAck(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenAck(e) =>
 					MsgEnvelope::Channel(ChannelMsg::OpenAck(MsgChannelOpenAck {
 						port_id_on_a: PortId::from_str(e.port_id.as_str()).unwrap(),
 						chan_id_on_a: ChannelId::new(e.channel_id.sequence()),
@@ -348,9 +342,8 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						chan_id_on_b: ChannelId::new(e.counterparty_channel_id.sequence()),
 						version_on_b: ChanVersion::from_str(&e.counterparty_version.to_string())
 							.unwrap(),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenConfirm(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelOpenConfirm(e) =>
 					MsgEnvelope::Channel(ChannelMsg::OpenConfirm(MsgChannelOpenConfirm {
 						port_id_on_b: PortId::from_str(e.port_id.as_str()).unwrap(),
 						chan_id_on_b: ChannelId::new(e.channel_id.sequence()),
@@ -364,16 +357,14 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						)
 						.unwrap(),
 						signer: Signer::from(e.signer.as_ref().to_string()),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelCloseInit(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelCloseInit(e) =>
 					MsgEnvelope::Channel(ChannelMsg::CloseInit(MsgChannelCloseInit {
 						port_id_on_a: PortId::from_str(e.port_id.as_str()).unwrap(),
 						chan_id_on_a: ChannelId::new(e.channel_id.sequence()),
 						signer: Signer::from(e.signer.as_ref().to_string()),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelCloseConfirm(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::ChannelMsg::ChannelCloseConfirm(e) =>
 					MsgEnvelope::Channel(ChannelMsg::CloseConfirm(MsgChannelCloseConfirm {
 						port_id_on_b: PortId::from_str(e.port_id.as_str()).unwrap(),
 						chan_id_on_b: ChannelId::new(e.channel_id.sequence()),
@@ -387,11 +378,10 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						)
 						.unwrap(),
 						signer: Signer::from(e.signer.as_ref().to_string()),
-					}))
-				},
+					})),
 			},
 			Ics26Envelope::Ics4PacketMsg(msg) => match msg {
-				ibc::core::ics04_channel::msgs::PacketMsg::RecvPacket(e) => {
+				ibc::core::ics04_channel::msgs::PacketMsg::RecvPacket(e) =>
 					MsgEnvelope::Packet(PacketMsg::Recv(MsgRecvPacket {
 						packet: Packet {
 							seq_on_a: Sequence::from(e.packet.sequence.0),
@@ -427,9 +417,8 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 						)
 						.unwrap(),
 						signer: Signer::from(e.signer.as_ref().to_string()),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::PacketMsg::AckPacket(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::PacketMsg::AckPacket(e) =>
 					MsgEnvelope::Packet(PacketMsg::Ack(MsgAcknowledgement {
 						packet: Packet {
 							seq_on_a: Sequence::from(e.packet.sequence.0),
@@ -471,9 +460,8 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 							e.proofs.height().revision_height,
 						)
 						.unwrap(),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::PacketMsg::ToPacket(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::PacketMsg::ToPacket(e) =>
 					MsgEnvelope::Packet(PacketMsg::Timeout(MsgTimeout {
 						packet: Packet {
 							seq_on_a: Sequence::from(e.packet.sequence.0),
@@ -510,9 +498,8 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 							e.proofs.object_proof().as_bytes().to_vec(),
 						)
 						.unwrap(),
-					}))
-				},
-				ibc::core::ics04_channel::msgs::PacketMsg::ToClosePacket(e) => {
+					})),
+				ibc::core::ics04_channel::msgs::PacketMsg::ToClosePacket(e) =>
 					MsgEnvelope::Packet(PacketMsg::TimeoutOnClose(MsgTimeoutOnClose {
 						packet: Packet {
 							seq_on_a: Sequence::from(e.packet.sequence.0),
@@ -553,8 +540,7 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 							e.proofs.other_proof().clone().unwrap().as_bytes().to_vec(),
 						)
 						.unwrap(),
-					}))
-				},
+					})),
 			},
 		})
 		.collect();

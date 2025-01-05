@@ -251,14 +251,16 @@ impl CompileCmd {
 			format!("{}/proto/cosmos/upgrade", sdk_dir.display()),
 		];
 
-		let proto_includes_paths = [format!("{}", gogo.display()),
+		let proto_includes_paths = [
+			format!("{}", gogo.display()),
 			format!("{}", google.display()),
 			format!("{}/proto", cosmos_proto.display()),
 			format!("{}/proto", ics23.display()),
 			format!("{root}/../proto"),
 			format!("{}/proto", sdk_dir.display()),
 			format!("{}/third_party/proto", sdk_dir.display()),
-			format!("{}/proto", ibc_dir.display())];
+			format!("{}/proto", ibc_dir.display()),
+		];
 
 		// List available proto files
 		let mut protos: Vec<PathBuf> = vec![];

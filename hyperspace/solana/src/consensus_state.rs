@@ -41,13 +41,12 @@ pub fn convert_new_consensus_state_to_old(
 		solana_ibc::consensus_state::AnyConsensusState::Wasm(_) => {
 			panic!("Guest consensus not supported")
 		},
-		solana_ibc::consensus_state::AnyConsensusState::Rollup(cs) => {
+		solana_ibc::consensus_state::AnyConsensusState::Rollup(cs) =>
 			AnyConsensusState::Rollup(cf_solana::ConsensusState(cf_solana_og::ConsensusState {
 				trie_root: cs.trie_root,
 				timestamp_sec: cs.timestamp_sec,
-			}))
-		},
-		_ => unimplemented!()
+			})),
+		_ => unimplemented!(),
 	}
 }
 

@@ -2407,7 +2407,8 @@ pub mod api {
 				}
 				pub fn block_length(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::frame_system::limits::BlockLength> {
+				) -> ::subxt::constants::Address<runtime_types::frame_system::limits::BlockLength>
+				{
 					::subxt::constants::Address::new_static(
 						"System",
 						"BlockLength",
@@ -7941,7 +7942,8 @@ pub mod api {
 				}
 				pub fn proposal_bond_maximum(
 					&self,
-				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>> {
+				) -> ::subxt::constants::Address<::core::option::Option<::core::primitive::u128>>
+				{
 					::subxt::constants::Address::new_static(
 						"Treasury",
 						"ProposalBondMaximum",
@@ -18485,7 +18487,8 @@ pub mod api {
 			impl ConstantsApi {
 				pub fn native_asset_id(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId> {
+				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId>
+				{
 					::subxt::constants::Address::new_static(
 						"Assets",
 						"NativeAssetId",
@@ -23789,7 +23792,8 @@ pub mod api {
 			impl ConstantsApi {
 				pub fn native_asset_id(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId> {
+				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId>
+				{
 					::subxt::constants::Address::new_static(
 						"Ibc",
 						"NativeAssetId",
@@ -23817,7 +23821,8 @@ pub mod api {
 				}
 				pub fn light_client_protocol(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::pallet_ibc::LightClientProtocol> {
+				) -> ::subxt::constants::Address<runtime_types::pallet_ibc::LightClientProtocol>
+				{
 					::subxt::constants::Address::new_static(
 						"Ibc",
 						"LightClientProtocol",
@@ -24644,7 +24649,8 @@ pub mod api {
 				}
 				pub fn relay_currency(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId> {
+				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId>
+				{
 					::subxt::constants::Address::new_static(
 						"PalletXcmHelper",
 						"RelayCurrency",
@@ -26650,7 +26656,8 @@ pub mod api {
 				}
 				pub fn staking_currency(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId> {
+				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId>
+				{
 					::subxt::constants::Address::new_static(
 						"PalletLiquidStaking",
 						"StakingCurrency",
@@ -26664,7 +26671,8 @@ pub mod api {
 				}
 				pub fn liquid_currency(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId> {
+				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId>
+				{
 					::subxt::constants::Address::new_static(
 						"PalletLiquidStaking",
 						"LiquidCurrency",
@@ -26781,7 +26789,8 @@ pub mod api {
 				}
 				pub fn native_currency(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId> {
+				) -> ::subxt::constants::Address<runtime_types::primitives::currency::CurrencyId>
+				{
 					::subxt::constants::Address::new_static(
 						"PalletLiquidStaking",
 						"NativeCurrency",

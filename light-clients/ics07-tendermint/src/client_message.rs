@@ -33,10 +33,7 @@ use ibc_proto::{
 };
 use prost::Message;
 use serde::{Deserialize, Serialize};
-use tendermint::{
-	block::{signed_header::SignedHeader},
-	validator::Set as ValidatorSet,
-};
+use tendermint::{block::signed_header::SignedHeader, validator::Set as ValidatorSet};
 use tendermint_proto::Protobuf;
 
 pub const TENDERMINT_HEADER_TYPE_URL: &str = "/ibc.lightclients.tendermint.v1.Header";

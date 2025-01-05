@@ -9,9 +9,7 @@ use ibc_core_host_types::path::{
 mod ibc {
 	pub use ibc::core::{
 		ics23_commitment::commitment::{CommitmentPrefix, CommitmentProofBytes, CommitmentRoot},
-		ics24_host::{
-			path,
-		},
+		ics24_host::path,
 	};
 }
 
@@ -97,7 +95,13 @@ pub fn verify_bytes(
 	path: ibc::path::Path,
 	value: Option<&[u8]>,
 ) -> Result<(), VerifyError> {
-	cf_guest_upstream::proof::verify_for_block(prefix, proof, root, convert_old_path_to_new(path), value)
+	cf_guest_upstream::proof::verify_for_block(
+		prefix,
+		proof,
+		root,
+		convert_old_path_to_new(path),
+		value,
+	)
 }
 
 fn convert_old_path_to_new(path: ibc::path::Path) -> ibc_core_host_types::path::Path {

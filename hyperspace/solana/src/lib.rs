@@ -2274,29 +2274,18 @@ impl Chain for SolanaClient {
 
 	async fn submit(&self, messages: Vec<Any>) -> Result<Self::TransactionId, Error> {
 		let keypair = self.keybase.keypair();
-		log::info!("submitting tx now, {} with messages {}", keypair.pubkey(), messages.len());
-		log::info!("Messages {:?}", messages);
+		println!("submitting tx now, {}", keypair.pubkey());
 		let authority = Arc::new(keypair);
 		let program = self.program();
-
-		if *self.is_transaction_processing.lock().unwrap() {
-			log::info!("Waiting for other thread to complete");
-			sleep(Duration::from_millis(500))
-		}
-
-		*self.is_transaction_processing.lock().unwrap() = true;
 
 		// Build, sign, and send program instruction
 		let mut signature = String::new();
 		let rpc = program.async_rpc();
 
 		let mut all_transactions = Vec::new();
-		let mut index = -1;
-
-		let mut messages_indeed = vec![];
 
 		for message in messages {
-			let storage = self.get_ibc_storage().await?;
+			let storage = self.get_ibc_storage().await;
 			let my_message = Ics26Envelope::<LocalClientTypes>::try_from(message.clone()).unwrap();
 			let new_messages = convert_old_msgs_to_new(vec![my_message]);
 			let message = new_messages[0].clone();
@@ -2307,13 +2296,11 @@ impl Chain for SolanaClient {
 			let instruction_len = instruction_data.len() as u32;
 			instruction_data.splice(..0, instruction_len.to_le_bytes());
 
-			messages_indeed.push(message.clone());
-
 			let balance = program.async_rpc().get_balance(&authority.pubkey()).await.unwrap();
-			log::info!("This is balance {}", balance);
-			log::info!("This is start of payload ---------------------------------");
-			log::info!("{:?}", message);
-			log::info!("This is end of payload ----------------------------------");
+			println!("This is balance {}", balance);
+			println!("This is start of payload ---------------------------------");
+			println!("{:?}", message);
+			println!("This is end of payload ----------------------------------");
 
 			let max_tries = 5;
 
@@ -2328,13 +2315,12 @@ impl Chain for SolanaClient {
 			chunks.chunk_size = core::num::NonZeroU16::new(800).unwrap();
 
 			let compute_budget_ix = ComputeBudgetInstruction::set_compute_unit_limit(30_000);
-			// let compute_unit_price_ix =
-			// 	ComputeBudgetInstruction::set_compute_unit_price(10_000_001);
+			let compute_unit_price_ix = ComputeBudgetInstruction::set_compute_unit_price(50_000);
 
 			let chunking_transactions: Vec<Transaction> = chunks
 				.map(|ix| {
 					Transaction::new_with_payer(
-						&[compute_budget_ix.clone(), ix],
+						&[compute_budget_ix.clone(), compute_unit_price_ix.clone(), ix],
 						Some(&authority.pubkey()),
 					)
 				})
@@ -2347,33 +2333,33 @@ impl Chain for SolanaClient {
 			// 		&[&*authority],
 			// 		blockhash,
 			// 	);
-			// 	let sig = rpc.send_and_confirm_transaction_with_spinner(&transaction).await.unwrap();
-			// 	// futures.push(x);
-			// 	println!("  Signature {sig}");
+			// 	let sig =
+			// rpc.send_and_confirm_transaction_with_spinner(&transaction).await.unwrap(); 	//
+			// futures. push(x); 	println!("  Signature {sig}");
 			// }
 
 			let (signature_chunking_transactions, further_transactions) =
-				// if let MsgEnvelope::Client(ClientMsg::UpdateClient(e)) = message {
-				// 	self.send_deliver(
-				// 		DeliverIxType::UpdateClient {
-				// 			client_message: e.client_message,
-				// 			client_id: e.client_id,
-				// 		},
-				// 		chunk_account,
-				// 		max_tries,
-				// 	)
-				// 	.await?
-				// // msg!("Packet Update Signature {:?}", signature);
-				// } else
-				 if let MsgEnvelope::Packet(PacketMsg::Recv(e)) = message {
+				if let MsgEnvelope::Client(ClientMsg::UpdateClient(e)) = message {
+					self.send_deliver(
+						DeliverIxType::UpdateClient {
+							client_message: e.client_message,
+							client_id: e.client_id,
+						},
+						chunk_account,
+						max_tries,
+					)
+					.await?
+				// msg!("Packet Update Signature {:?}", signature);
+				} else if let MsgEnvelope::Packet(PacketMsg::Recv(e)) = message {
 					let packet_data: ibc_app_transfer_types::packet::PacketData =
 						serde_json::from_slice(&e.packet.data).unwrap();
 					self.send_deliver(
 						DeliverIxType::Recv {
 							token: packet_data.token,
-							port_id: e.packet.port_id_on_a,
-							channel_id: e.packet.chan_id_on_a,
+							port_id: e.packet.port_id_on_b,
+							channel_id: e.packet.chan_id_on_b,
 							receiver: packet_data.receiver.to_string(),
+							memo: packet_data.memo.to_string(),
 						},
 						chunk_account,
 						max_tries,
@@ -2477,7 +2463,6 @@ impl Chain for SolanaClient {
 		}
 
 		let total_transactions_length = all_transactions.iter().fold(0, |acc, tx| acc + tx.len());
-		let mut failure = false;
 
 		match self.transaction_sender {
 			TransactionSender::RPC => {
@@ -2485,39 +2470,24 @@ impl Chain for SolanaClient {
 				log::info!("Total transactions {:?}", length);
 				let start_time = Instant::now();
 				for transactions_iter in all_transactions {
-					log::info!("Came inside all events");
 					let mut tries = 0;
 					let before_time = Instant::now();
 					for mut transaction in transactions_iter {
 						loop {
-							log::info!("Current Try in solana: {}", tries);
+							sleep(Duration::from_secs(1));
+							log::info!("Current Try: {}", tries);
 							let blockhash = rpc.get_latest_blockhash().await.unwrap();
-							// log::info!(
-							// 	"Blockhash in solana {:?} and {:?}",
-							// 	blockhash,
-							// 	messages_indeed.clone()
-							// );
 							transaction.sign(&[&*authority], blockhash);
-							let tx = transaction.clone();
-							// log::info!("Signed now in solana {:?}", messages_indeed.clone());
-							let sync_rpc = self.program().rpc();
-							let rpc = self.rpc_client();
-							let messagessss = messages_indeed.clone();
-							let sig = spawn_blocking(move || {
-								// log::info!("Sending transaction {:?}", messagessss.clone());
-								sync_rpc
-									.send_transaction_with_config(
-										&tx,
-										RpcSendTransactionConfig {
-											skip_preflight: true,
-											max_retries: Some(0),
-											..RpcSendTransactionConfig::default()
-										},
-									)
-									.unwrap()
-							})
-							.await;
-							log::info!("This is sig {:?}", sig);
+							let sig = rpc
+								.send_transaction_with_config(
+									&transaction,
+									RpcSendTransactionConfig {
+										skip_preflight: true,
+										max_retries: Some(0),
+										..RpcSendTransactionConfig::default()
+									},
+								)
+								.await;
 
 							if let Ok(si) = sig {
 								signature = si.to_string();
@@ -2537,8 +2507,6 @@ impl Chain for SolanaClient {
 												e
 											);
 											success = true;
-											failure = true;
-											log::error!("Failure {}", failure);
 											break;
 										},
 										None => {
@@ -2556,7 +2524,6 @@ impl Chain for SolanaClient {
 												break;
 											} else if status_retry < usize::MAX {
 												// Retry twice a second
-												log::info!("Retyring since blockhash is not valid");
 												sleep(Duration::from_millis(500));
 												continue;
 											}
@@ -2566,13 +2533,11 @@ impl Chain for SolanaClient {
 								if !success {
 									tries += 1;
 									continue;
-									sleep(Duration::from_secs(1));
 								}
 								break;
 							} else {
 								log::error!("Error {:?}", sig);
 								tries += 1;
-								sleep(Duration::from_secs(1));
 								continue;
 							}
 						}
@@ -2581,7 +2546,6 @@ impl Chain for SolanaClient {
 						let success_rate = 100 / (tries + 1);
 						log::info!("Time taken {}", diff.as_millis());
 						log::info!("Success rate {}", success_rate);
-						log::info!("Failure {}", failure);
 					}
 				}
 				let end_time = Instant::now();
@@ -2602,10 +2566,22 @@ impl Chain for SolanaClient {
 						let mut tries = 0;
 
 						let before_time = Instant::now();
+						let mut current_transactions = Vec::new();
+						let jito_address =
+							Pubkey::from_str("96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5")
+								.unwrap();
+						let ix = anchor_lang::solana_program::system_instruction::transfer(
+							&authority.pubkey(),
+							&jito_address,
+							100000,
+						);
+
+						let tx = Transaction::new_with_payer(&[ix], Some(&authority.pubkey()));
+
+						current_transactions.push(tx);
+						current_transactions.extend(transactions.to_vec());
 						while tries < 5 {
 							println!("Try For Tx: {}", tries);
-							let mut current_transactions = Vec::new();
-
 							let mut client = jito_searcher_client::get_searcher_client(
 								&BLOCK_ENGINE_URL,
 								&authority,
@@ -2614,26 +2590,15 @@ impl Chain for SolanaClient {
 							.expect("connects to searcher client");
 							let mut bundle_results_subscription = client
 								.subscribe_bundle_results(SubscribeBundleResultsRequest {})
-								.await?
+								.await
+								.expect("subscribe to bundle results")
 								.into_inner();
 
-							let jito_address =
-								Pubkey::from_str("96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5")
-									.unwrap();
-							let ix = anchor_lang::solana_program::system_instruction::transfer(
-								&authority.pubkey(),
-								&jito_address,
-								100000,
-							);
 							let rpc_client = self.rpc_client();
 							let blockhash = rpc.get_latest_blockhash().await.unwrap();
-							let tx = Transaction::new_with_payer(&[ix], Some(&authority.pubkey()));
-
-							current_transactions.push(tx);
-							current_transactions.extend(transactions.to_vec());
-
 							let versioned_transactions: Vec<VersionedTransaction> =
 								current_transactions
+									.clone()
 									.into_iter()
 									.map(|mut tx| {
 										tx.sign(&[&*authority], blockhash);
@@ -2666,7 +2631,84 @@ impl Chain for SolanaClient {
 							}
 						}
 						if tries == 5 {
-							log::error!("Failed to send transaction");
+							log::error!("Failed to send transaction with the tries, Sending it through RPC Now");
+							// Removing the first tx since its a tip
+							current_transactions.remove(0);
+							for mut transaction in current_transactions {
+								let mut rpc_tries = 0;
+								while rpc_tries < 10 {
+									sleep(Duration::from_secs(1));
+									log::info!("Current Try In RPC: {}", rpc_tries);
+									let blockhash = rpc.get_latest_blockhash().await.unwrap();
+									transaction.sign(&[&*authority], blockhash);
+									let sig = rpc
+										.send_transaction_with_config(
+											&transaction,
+											RpcSendTransactionConfig {
+												skip_preflight: true,
+												max_retries: Some(0),
+												..RpcSendTransactionConfig::default()
+											},
+										)
+										.await;
+
+									if let Ok(si) = sig {
+										signature = si.to_string();
+										// Wait for finalizing the transaction
+										let mut success = false;
+										// let blockhash =
+										// rpc.get_latest_blockhash().await.unwrap();
+										for status_retry in 0..usize::MAX {
+											match rpc.get_signature_status(&si).await.unwrap() {
+												Some(Ok(_)) => {
+													log::info!("  Signature {:?}", si);
+													success = true;
+													break;
+												},
+												Some(Err(e)) => {
+													log::error!(
+														"Error while sending the transaction {:?}",
+														e
+													);
+													success = true;
+													break;
+												},
+												None => {
+													if !rpc
+														.is_blockhash_valid(
+															&blockhash,
+															CommitmentConfig::processed(),
+														)
+														.await
+														.unwrap()
+													{
+														// Block hash is not found by some reason
+														log::error!("Blockhash not found");
+														success = false;
+														break;
+													} else if status_retry < usize::MAX {
+														// Retry twice a second
+														sleep(Duration::from_millis(500));
+														continue;
+													}
+												},
+											}
+										}
+										if !success {
+											rpc_tries += 1;
+											continue;
+										}
+										break;
+									} else {
+										log::error!("Error {:?}", sig);
+										rpc_tries += 1;
+										continue;
+									}
+								}
+								if rpc_tries == 10 {
+									log::error!("Failed to send transaction through RPC too...");
+								}
+							}
 						} else {
 							let after_time = Instant::now();
 							let diff = after_time - before_time;
@@ -2690,11 +2732,7 @@ impl Chain for SolanaClient {
 		// Wait for finalizing the transaction
 		if !self.common_state.handshake_completed {
 			loop {
-				log::info!("Finalizing Transaction {}", failure);
-				if failure {
-					log::error!("Breaking due to error");
-					break;
-				}
+				log::info!("Finalizing Transaction");
 				let result = rpc
 					.confirm_transaction_with_commitment(
 						&Signature::from_str(&signature).unwrap(),
@@ -2711,8 +2749,6 @@ impl Chain for SolanaClient {
 			}
 		}
 
-		*self.is_transaction_processing.lock().unwrap() = false;
-		log::info!("Finished processing transaction");
 		Ok(signature)
 	}
 

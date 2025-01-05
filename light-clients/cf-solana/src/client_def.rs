@@ -20,13 +20,10 @@ use crate::{error::Error, ClientMessage, ClientState, ConsensusState as ClientCo
 
 type Result<T = (), E = ibc::core::ics02_client::error::Error> = ::core::result::Result<T, E>;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Default)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct SolanaClient {}
 
-
-impl ClientDef for SolanaClient
-{
+impl ClientDef for SolanaClient {
 	type ClientMessage = ClientMessage;
 	type ClientState = ClientState;
 	type ConsensusState = ClientConsensusState;
@@ -356,9 +353,7 @@ impl<Ctx> CommonContext<Ctx> {
 
 type NewResult<T = ()> = Result<T, ibc_core_client_types::error::ClientError>;
 
-impl<Ctx: ReaderContext> cf_solana_upstream::CommonContext
-	for CommonContext<Ctx>
-{
+impl<Ctx: ReaderContext> cf_solana_upstream::CommonContext for CommonContext<Ctx> {
 	type ConversionError = core::convert::Infallible;
 	type AnyClientState = ClientState;
 	type AnyConsensusState = ClientConsensusState;

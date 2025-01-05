@@ -59,15 +59,14 @@ pub fn convert_new_client_state_to_old(
 		// 	}),
 		// solana_ibc::client_state::AnyClientState::Mock(_) => unimplemented!(),
 		solana_ibc::client_state::AnyClientState::Wasm(_) => unimplemented!(),
-		solana_ibc::client_state::AnyClientState::Rollup(cs) => {
+		solana_ibc::client_state::AnyClientState::Rollup(cs) =>
 			AnyClientState::Rollup(cf_solana::ClientState(cf_solana_og::ClientState {
 				latest_slot: cs.latest_slot,
 				witness_account: cs.witness_account,
 				trusting_period_ns: cs.trusting_period_ns,
 				is_frozen: cs.is_frozen,
-			}))
-		},
-		solana_ibc::client_state::AnyClientState::Guest(cs) => {
+			})),
+		solana_ibc::client_state::AnyClientState::Guest(cs) =>
 			AnyClientState::Guest(cf_guest::ClientState(cf_guest_og::ClientState::new(
 				cs.genesis_hash,
 				cs.latest_height,
@@ -75,8 +74,7 @@ pub fn convert_new_client_state_to_old(
 				cs.epoch_commitment,
 				Some(cs.prev_epoch_commitment),
 				cs.is_frozen,
-			)))
-		},
+			))),
 		_ => unimplemented!(),
 	}
 }

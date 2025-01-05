@@ -27,8 +27,8 @@ use ibc_core_host_types::identifiers::{ChannelId, ClientId, ConnectionId, PortId
 use ibc_new_primitives::{Signer, Timestamp};
 use ibc_proto_new::{google::protobuf::Any, ibc::core::connection::v1::Version};
 use primitives::mock::LocalClientTypes;
-use std::str::FromStr;
 use prost::Message;
+use std::str::FromStr;
 
 const ROLLUP_CLIENT_STATE_TYPE_URL: &'static str = cf_solana::proto::ClientState::IBC_TYPE_URL;
 
@@ -52,7 +52,7 @@ pub fn convert_old_msgs_to_new(messages: Vec<Ics26Envelope<LocalClientTypes>>) -
 					let header = match &e.client_message {
 						pallet_ibc::light_clients::AnyClientMessage::Tendermint(msg) =>
 							ibc_proto::google::protobuf::Any::from(msg.clone()),
-					  pallet_ibc::light_clients::AnyClientMessage::Guest(msg) =>
+						pallet_ibc::light_clients::AnyClientMessage::Guest(msg) =>
 							ibc_proto::google::protobuf::Any::from(msg.clone()),
 						_ => panic!("Not supported"),
 					};

@@ -8,9 +8,13 @@ use super::{ClientMessage, ClientState, ConsensusState};
 use cf_solana_upstream::Neighbourhood;
 
 mod ibc {
-	pub use ibc::core::ics02_client::{error::Error as ClientError, height::Height};
-	pub use ibc::core::ics24_host::identifier::ClientId;
-	pub use ibc::timestamp::Timestamp;
+	pub use ibc::{
+		core::{
+			ics02_client::{error::Error as ClientError, height::Height},
+			ics24_host::identifier::ClientId,
+		},
+		timestamp::Timestamp,
+	};
 }
 
 type Result<T = (), E = ibc::ClientError> = ::core::result::Result<T, E>;
@@ -341,12 +345,10 @@ impl ClientState {
 		client_message: ClientMessage,
 	) -> Result<bool> {
 		match client_message.0 {
-			cf_solana_upstream::ClientMessage::Header(header) => {
-				self.check_for_misbehaviour_in_header(ctx, client_id, header)
-			},
-			cf_solana_upstream::ClientMessage::Misbehaviour(misbehaviour) => {
-				self.check_for_misbehaviour_in_misbehavior(ctx, client_id, misbehaviour)
-			},
+			cf_solana_upstream::ClientMessage::Header(header) =>
+				self.check_for_misbehaviour_in_header(ctx, client_id, header),
+			cf_solana_upstream::ClientMessage::Misbehaviour(misbehaviour) =>
+				self.check_for_misbehaviour_in_misbehavior(ctx, client_id, misbehaviour),
 		}
 	}
 
@@ -405,8 +407,8 @@ impl ClientState {
 				// If it isn’t, that’s evidence of misbehaviour.  Solana uses
 				// timestamps with second-granularity with sub-second blocks so
 				// consecutive slots may have the same timestamp.
-				check_timestamp(prev, |prev| current < prev)?
-					|| check_timestamp(next, |next| next < current)?
+				check_timestamp(prev, |prev| current < prev)? ||
+					check_timestamp(next, |next| next < current)?
 			},
 		})
 	}

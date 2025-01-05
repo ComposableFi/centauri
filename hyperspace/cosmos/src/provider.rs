@@ -763,8 +763,8 @@ where
 					match ev {
 						Ok(IbcEvent::SendPacket(p))
 							if seqs.contains(&p.packet.sequence.0) &&
-								p.packet.source_port == port_id && p.packet.source_channel ==
-								channel_id =>
+								p.packet.source_port == port_id &&
+								p.packet.source_channel == channel_id =>
 						{
 							let seq = p.packet.sequence.0;
 							let mut info = PacketInfo::try_from(IbcPacketInfo::from(p.packet))

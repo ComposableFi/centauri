@@ -1490,7 +1490,8 @@ pub mod api {
 				}
 				pub fn block_length(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::frame_system::limits::BlockLength> {
+				) -> ::subxt::constants::Address<runtime_types::frame_system::limits::BlockLength>
+				{
 					::subxt::constants::Address::new_static(
 						"System",
 						"BlockLength",
@@ -11122,7 +11123,8 @@ pub mod api {
 				}
 				pub fn light_client_protocol(
 					&self,
-				) -> ::subxt::constants::Address<runtime_types::pallet_ibc::LightClientProtocol> {
+				) -> ::subxt::constants::Address<runtime_types::pallet_ibc::LightClientProtocol>
+				{
 					::subxt::constants::Address::new_static(
 						"Ibc",
 						"LightClientProtocol",

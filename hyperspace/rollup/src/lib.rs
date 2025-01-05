@@ -2107,9 +2107,9 @@ impl Chain for RollupClient {
 			// 		&[&*authority],
 			// 		blockhash,
 			// 	);
-			// 	let sig = rpc.send_and_confirm_transaction_with_spinner(&transaction).await.unwrap();
-			// 	// futures.push(x);
-			// 	println!("  Signature {sig}");
+			// 	let sig =
+			// rpc.send_and_confirm_transaction_with_spinner(&transaction).await.unwrap(); 	// futures.
+			// push(x); 	println!("  Signature {sig}");
 			// }
 
 			let (signature_chunking_transactions, further_transactions) =

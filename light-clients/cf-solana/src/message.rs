@@ -16,8 +16,7 @@ impl ClientMessage {
 	}
 }
 
-impl ibc::core::ics02_client::client_message::ClientMessage for ClientMessage
-{
+impl ibc::core::ics02_client::client_message::ClientMessage for ClientMessage {
 	fn encode_to_vec(&self) -> Result<ibc::prelude::Vec<u8>, ibc::protobuf::Error> {
 		Ok(proto::ClientMessage::from(self).encode_to_vec())
 	}

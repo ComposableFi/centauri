@@ -229,17 +229,9 @@ fn process_message(
 			// consensus state should be replaced as well
 			let substitute_consensus_state =
 				ctx.consensus_state_prefixed(height, SUBSTITUTE_PREFIX)?;
-			ctx.store_consensus_state_prefixed(
-				height,
-				substitute_consensus_state,
-				SUBJECT_PREFIX,
-			);
-			ctx.store_client_state_prefixed(
-				substitute_client_state,
-				SUBJECT_PREFIX,
-				client_id,
-			)
-			.map_err(|e| ContractError::Grandpa(e.to_string()))?;
+			ctx.store_consensus_state_prefixed(height, substitute_consensus_state, SUBJECT_PREFIX);
+			ctx.store_client_state_prefixed(substitute_client_state, SUBJECT_PREFIX, client_id)
+				.map_err(|e| ContractError::Grandpa(e.to_string()))?;
 
 			Ok(()).map(|_| to_binary(&ContractResult::success()))
 		},
