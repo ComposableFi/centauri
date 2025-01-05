@@ -2359,7 +2359,6 @@ impl Chain for SolanaClient {
 							port_id: e.packet.port_id_on_b,
 							channel_id: e.packet.chan_id_on_b,
 							receiver: packet_data.receiver.to_string(),
-							memo: packet_data.memo.to_string(),
 						},
 						chunk_account,
 						max_tries,
