@@ -2132,7 +2132,7 @@ impl Chain for RollupClient {
 							"Skipping transfer packet with 0 amount, seq: {}",
 							e.packet.seq_on_a
 						);
-						continue;
+						// continue;
 					}
 					self.send_deliver(
 						DeliverIxType::Recv {
