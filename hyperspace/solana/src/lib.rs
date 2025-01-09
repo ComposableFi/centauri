@@ -2274,18 +2274,29 @@ impl Chain for SolanaClient {
 
 	async fn submit(&self, messages: Vec<Any>) -> Result<Self::TransactionId, Error> {
 		let keypair = self.keybase.keypair();
-		println!("submitting tx now, {}", keypair.pubkey());
+		log::info!("submitting tx now, {} with messages {}", keypair.pubkey(), messages.len());
+		log::info!("Messages {:?}", messages);
 		let authority = Arc::new(keypair);
 		let program = self.program();
+
+		if *self.is_transaction_processing.lock().unwrap() {
+			log::info!("Waiting for other thread to complete");
+			sleep(Duration::from_millis(500))
+		}
+
+		*self.is_transaction_processing.lock().unwrap() = true;
 
 		// Build, sign, and send program instruction
 		let mut signature = String::new();
 		let rpc = program.async_rpc();
 
 		let mut all_transactions = Vec::new();
+		let mut index = -1;
+
+		let mut messages_indeed = vec![];
 
 		for message in messages {
-			let storage = self.get_ibc_storage().await;
+			let storage = self.get_ibc_storage().await?;
 			let my_message = Ics26Envelope::<LocalClientTypes>::try_from(message.clone()).unwrap();
 			let new_messages = convert_old_msgs_to_new(vec![my_message]);
 			let message = new_messages[0].clone();
@@ -2296,11 +2307,13 @@ impl Chain for SolanaClient {
 			let instruction_len = instruction_data.len() as u32;
 			instruction_data.splice(..0, instruction_len.to_le_bytes());
 
+			messages_indeed.push(message.clone());
+
 			let balance = program.async_rpc().get_balance(&authority.pubkey()).await.unwrap();
-			println!("This is balance {}", balance);
-			println!("This is start of payload ---------------------------------");
-			println!("{:?}", message);
-			println!("This is end of payload ----------------------------------");
+			log::info!("This is balance {}", balance);
+			log::info!("This is start of payload ---------------------------------");
+			log::info!("{:?}", message);
+			log::info!("This is end of payload ----------------------------------");
 
 			let max_tries = 5;
 
@@ -2316,6 +2329,8 @@ impl Chain for SolanaClient {
 
 			let compute_budget_ix = ComputeBudgetInstruction::set_compute_unit_limit(30_000);
 			let compute_unit_price_ix = ComputeBudgetInstruction::set_compute_unit_price(50_000);
+			// let compute_unit_price_ix =
+			// 	ComputeBudgetInstruction::set_compute_unit_price(10_000_001);
 
 			let chunking_transactions: Vec<Transaction> = chunks
 				.map(|ix| {
@@ -2356,8 +2371,8 @@ impl Chain for SolanaClient {
 					self.send_deliver(
 						DeliverIxType::Recv {
 							token: packet_data.token,
-							port_id: e.packet.port_id_on_b,
-							channel_id: e.packet.chan_id_on_b,
+							port_id: e.packet.port_id_on_a,
+							channel_id: e.packet.chan_id_on_a,
 							receiver: packet_data.receiver.to_string(),
 						},
 						chunk_account,
@@ -2462,6 +2477,7 @@ impl Chain for SolanaClient {
 		}
 
 		let total_transactions_length = all_transactions.iter().fold(0, |acc, tx| acc + tx.len());
+		let mut failure = false;
 
 		match self.transaction_sender {
 			TransactionSender::RPC => {
@@ -2469,6 +2485,7 @@ impl Chain for SolanaClient {
 				log::info!("Total transactions {:?}", length);
 				let start_time = Instant::now();
 				for transactions_iter in all_transactions {
+					log::info!("Came inside all events");
 					let mut tries = 0;
 					let before_time = Instant::now();
 					for mut transaction in transactions_iter {
@@ -2545,6 +2562,7 @@ impl Chain for SolanaClient {
 						let success_rate = 100 / (tries + 1);
 						log::info!("Time taken {}", diff.as_millis());
 						log::info!("Success rate {}", success_rate);
+						log::info!("Failure {}", failure);
 					}
 				}
 				let end_time = Instant::now();
@@ -2748,6 +2766,8 @@ impl Chain for SolanaClient {
 			}
 		}
 
+		*self.is_transaction_processing.lock().unwrap() = false;
+		log::info!("Finished processing transaction");
 		Ok(signature)
 	}
 
