@@ -2354,18 +2354,19 @@ impl Chain for SolanaClient {
 			// }
 
 			let (signature_chunking_transactions, further_transactions) =
-				if let MsgEnvelope::Client(ClientMsg::UpdateClient(e)) = message {
-					self.send_deliver(
-						DeliverIxType::UpdateClient {
-							client_message: e.client_message,
-							client_id: e.client_id,
-						},
-						chunk_account,
-						max_tries,
-					)
-					.await?
-				// msg!("Packet Update Signature {:?}", signature);
-				} else if let MsgEnvelope::Packet(PacketMsg::Recv(e)) = message {
+				// if let MsgEnvelope::Client(ClientMsg::UpdateClient(e)) = message {
+				// 	self.send_deliver(
+				// 		DeliverIxType::UpdateClient {
+				// 			client_message: e.client_message,
+				// 			client_id: e.client_id,
+				// 		},
+				// 		chunk_account,
+				// 		max_tries,
+				// 	)
+				// 	.await?
+				// // msg!("Packet Update Signature {:?}", signature);
+				// } else 
+				if let MsgEnvelope::Packet(PacketMsg::Recv(e)) = message {
 					let packet_data: ibc_app_transfer_types::packet::PacketData =
 						serde_json::from_slice(&e.packet.data).unwrap();
 					self.send_deliver(
