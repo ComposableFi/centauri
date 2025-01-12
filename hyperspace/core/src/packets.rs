@@ -47,7 +47,7 @@ use primitives::{
 pub mod connection_delay;
 pub mod utils;
 
-pub const PROCESS_PACKETS_BATCH_SIZE: usize = 100;
+pub const PROCESS_PACKETS_BATCH_SIZE: usize = 5;
 
 /// Returns a tuple of messages, with the first item being packets that are ready to be sent to the
 /// sink chain. And the second item being packet timeouts that should be sent to the source.
