@@ -96,7 +96,7 @@ use tendermint_rpc::Paging;
 // pub const NUMBER_OF_BLOCKS_TO_PROCESS_PER_ITER: u64 = 500;
 
 // These are the sequences which have an issue but have infinite timeout so we skip them
-pub const SEQUENCES_TO_SKIP: [u64; 5] = [2545, 2546, 2555, 2556, 2557, 2583];
+pub const SEQUENCES_TO_SKIP: [u64; 6] = [2545, 2546, 2555, 2556, 2557, 2583];
 
 #[derive(Clone, Debug)]
 pub enum FinalityEvent {
