@@ -725,11 +725,14 @@ deserialize consensus state"
 						}
 					}
 				}
+				// FIXME: HACK: This code should only be removed for Solana <> Cosmos bridge
+				/*
 				account_metas.push(AccountMeta {
 					pubkey: signatures_account_pda,
 					is_signer: false,
 					is_writable: true,
 				});
+				 */
 				account_metas.push(AccountMeta {
 					pubkey: chunk_account,
 					is_signer: false,
