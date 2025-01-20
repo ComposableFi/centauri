@@ -96,7 +96,7 @@ use tendermint_rpc::Paging;
 // pub const NUMBER_OF_BLOCKS_TO_PROCESS_PER_ITER: u64 = 500;
 
 // These are the sequences which have an issue but have infinite timeout so we skip them
-pub const SEQUENCES_TO_SKIP: [u64; 5] = [2545, 2546, 2555, 2556, 2557];
+pub const SEQUENCES_TO_SKIP: [u64; 5] = [2545, 2546, 2555, 2556, 2557, 2583];
 
 #[derive(Clone, Debug)]
 pub enum FinalityEvent {
@@ -589,7 +589,7 @@ where
 			response.commitments.into_iter().map(|v| v.sequence).collect();
 
 		// Filtering out the sequences that are not in the SEQUENCES_TO_SKIP list
-		// 
+		//
 		// These sequences have infinite timeout and are failing on solana due to an issue with
 		// the hook.
 		let filtered_seqs = commitment_sequences
@@ -778,8 +778,8 @@ where
 					match ev {
 						Ok(IbcEvent::SendPacket(p))
 							if seqs.contains(&p.packet.sequence.0) &&
-								p.packet.source_port == port_id &&
-								p.packet.source_channel == channel_id =>
+								p.packet.source_port == port_id && p.packet.source_channel ==
+								channel_id =>
 						{
 							let seq = p.packet.sequence.0;
 							let mut info = PacketInfo::try_from(IbcPacketInfo::from(p.packet))
