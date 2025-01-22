@@ -588,7 +588,7 @@ deserialize consensus state"
 						AccountMeta {
 							pubkey: system_program::ID,
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 						},
 					];
 					let mut data = vec![0, 0];

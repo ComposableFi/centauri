@@ -521,7 +521,7 @@ impl RollupClient {
 						AccountMeta {
 							pubkey: system_program::ID,
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 						},
 					];
 					let mut data = vec![0, 0];
@@ -632,7 +632,7 @@ impl RollupClient {
 						},
 						AccountMeta {
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 							pubkey: system_program::ID,
 						},
 						AccountMeta {
@@ -776,7 +776,7 @@ impl RollupClient {
 						},
 						AccountMeta {
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 							pubkey: system_program::ID,
 						},
 						AccountMeta { is_signer: false, is_writable: true, pubkey: chunk_account },
@@ -873,7 +873,7 @@ impl RollupClient {
 						},
 						AccountMeta {
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 							pubkey: system_program::ID,
 						},
 						AccountMeta { is_signer: false, is_writable: true, pubkey: chunk_account },
@@ -952,7 +952,7 @@ impl RollupClient {
 						},
 						AccountMeta {
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 							pubkey: system_program::ID,
 						},
 						AccountMeta { is_signer: false, is_writable: true, pubkey: chunk_account },
@@ -1054,7 +1054,7 @@ impl RollupClient {
 						},
 						AccountMeta {
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 							pubkey: system_program::ID,
 						},
 						AccountMeta { is_signer: false, is_writable: true, pubkey: chunk_account },
@@ -1214,7 +1214,7 @@ impl RollupClient {
 					pubkey: self.get_fee_collector_key(),
 				},
 				AccountMeta { is_signer: false, is_writable: true, pubkey: anchor_spl::token::ID },
-				AccountMeta { is_signer: false, is_writable: true, pubkey: system_program::ID },
+				AccountMeta { is_signer: false, is_writable: false, pubkey: system_program::ID },
 			])
 			.args(solana_ibc::instruction::SendTransfer {
 				hashed_full_denom: hashed_denom,
