@@ -1276,7 +1276,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4114279215a005bc675e386011e594e1d9b800918cea18fcadadcce864a2046b"
 dependencies = [
  "borsh-derive 0.10.3",
- "hashbrown 0.13.2",
+ "hashbrown 0.12.3",
 ]
 
 [[package]]
@@ -1567,7 +1567,7 @@ dependencies = [
 [[package]]
 name = "cf-guest"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "borsh 0.10.3",
  "bytemuck",
@@ -4842,7 +4842,7 @@ dependencies = [
 [[package]]
 name = "guestchain"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "borsh 0.10.3",
  "bytemuck",
@@ -7206,7 +7206,7 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 [[package]]
 name = "lib"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "base64 0.21.7",
  "borsh 0.10.3",
@@ -8079,7 +8079,7 @@ dependencies = [
 [[package]]
 name = "memory"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "derive_more",
  "stdx",
@@ -12168,7 +12168,7 @@ dependencies = [
 [[package]]
 name = "proto-utils"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "const_format",
  "derive_more",
@@ -14581,7 +14581,7 @@ dependencies = [
 [[package]]
 name = "sealable-trie"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "ascii 1.1.0",
  "base64 0.21.7",
@@ -15015,7 +15015,7 @@ dependencies = [
  "bytes",
  "ics23 0.10.0",
  "proptest",
- "rand 0.8.5",
+ "rand 0.4.6",
  "sha2 0.10.8",
  "tendermint 0.28.0",
 ]
@@ -15166,7 +15166,7 @@ dependencies = [
 [[package]]
 name = "solana-allocator"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -15303,7 +15303,7 @@ dependencies = [
 [[package]]
 name = "solana-ibc"
 version = "0.1.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -15725,7 +15725,7 @@ checksum = "468aa43b7edb1f9b7b7b686d5c3aeb6630dc1708e86e31343499dd5c4d775183"
 [[package]]
 name = "solana-signature-verifier"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "base64 0.21.7",
  "borsh 0.10.3",
@@ -15837,7 +15837,7 @@ dependencies = [
 [[package]]
 name = "solana-trie"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "bytemuck",
  "lib",
@@ -15903,7 +15903,7 @@ dependencies = [
 [[package]]
 name = "solana-write-account"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "solana-program",
  "stdx",
@@ -17406,7 +17406,7 @@ dependencies = [
 [[package]]
 name = "stdx"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 
 [[package]]
 name = "strsim"
@@ -18686,7 +18686,7 @@ dependencies = [
 [[package]]
 name = "trie-ids"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "ascii 1.1.0",
  "base64 0.21.7",
@@ -18852,9 +18852,9 @@ version = "1.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
- "cfg-if 1.0.0",
+ "cfg-if 0.1.10",
  "digest 0.10.7",
- "rand 0.8.5",
+ "rand 0.4.6",
  "static_assertions",
 ]
 
@@ -19119,7 +19119,7 @@ dependencies = [
 [[package]]
 name = "wasm"
 version = "0.0.0"
-source = "git+https://github.com/composableFi/emulated-light-client/#0c0f4b1f034639854a50217fd777d0a13a2dc55a"
+source = "git+https://github.com/composableFi/emulated-light-client?branch=hyperpsace-solana-cosmos#c630df8d17a49de4c4cf30c5f77d15b283781956"
 dependencies = [
  "const_format",
  "derive_more",

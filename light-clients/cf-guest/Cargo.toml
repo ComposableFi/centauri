@@ -6,9 +6,9 @@ edition = "2021"
 
 [dependencies]
 borsh = "0.10"
-bytemuck = { version = "1.14", default-features = false, features = ["must_cast"]}
-derive_more = { version = "0.99", features = ["from"], default-features = false  }
-prost = { version = "0.11" ,features = ["prost-derive"], default-features = false }
+bytemuck = { version = "1.14", default-features = false, features = ["must_cast"] }
+derive_more = { version = "0.99", features = ["from"], default-features = false }
+prost = { version = "0.11", features = ["prost-derive"], default-features = false }
 prost-12 = { package = "prost", version = "0.12", default-features = false }
 ed25519-consensus = { version = "2", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
@@ -27,12 +27,12 @@ ibc-derive = { path = "../../ibc/derive", default-features = false }
 
 tendermint-proto = { git = "https://github.com/mina86/tendermint-rs", rev = "45fbd500d731effb95a98257630feb46f6c41d06", default-features = false }
 
-guestchain        = { git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false }
-lib               = { git = "https://github.com/ComposableFi/emulated-light-client/", features = ["borsh"], default-features = false }
-trie-ids          = { git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false }
-sealable-trie     = { git = "https://github.com/ComposableFi/emulated-light-client/", features = ["borsh"], default-features = false }
-stdx              = { git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false }
-cf-guest-upstream = { package = "cf-guest", git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false }
+guestchain = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
+lib = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", features = ["borsh"], default-features = false }
+trie-ids = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
+sealable-trie = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", features = ["borsh"], default-features = false }
+stdx = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
+cf-guest-upstream = { package = "cf-guest", git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
 
 [build-dependencies]
 prost-build = { version = "0.11", default-features = false }
@@ -41,9 +41,9 @@ prost-build = { version = "0.11", default-features = false }
 insta = { version = "1.34.0" }
 rand = { version = "0.8.5" }
 
-guestchain        = { git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false, features = ["test_utils"] }
-lib               = { git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false, features = ["test_utils"] }
-memory            = { git = "https://github.com/ComposableFi/emulated-light-client/", default-features = false, features = ["test_utils"] }
+guestchain = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false, features = ["test_utils"] }
+lib = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false, features = ["test_utils"] }
+memory = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false, features = ["test_utils"] }
 
 [features]
 std = []

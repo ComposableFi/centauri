@@ -71,9 +71,9 @@ frame-system = { git = "https://github.com/paritytech/substrate", branch = "polk
 frame-support = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.43", default-features = false }
 prost = { version = "0.11", default-features = false }
 serde_json = "1.0.74"
-guestchain = { git = "https://github.com/composableFi/emulated-light-client/" ,default-features = false }
-sealable-trie = { git = "https://github.com/composableFi/emulated-light-client/" ,default-features = false }
-lib = { git = "https://github.com/composableFi/emulated-light-client/" ,default-features = false }
+guestchain = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
+sealable-trie = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
+lib = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", default-features = false }
 
 [dev-dependencies]
 derive_more = "0.99.17"
@@ -85,10 +85,10 @@ cosmos = { path = "../cosmos", package = "hyperspace-cosmos", features = [
     "testing",
 ] }
 solana = { path = "../solana", package = "hyperspace-solana" }
-trie-ids = { git = "https://github.com/composableFi/emulated-light-client/" ,features = ["borsh"] }
+trie-ids = { git = "https://github.com/composableFi/emulated-light-client", branch = "hyperpsace-solana-cosmos", features = ["borsh"] }
 
-ibc-new-primitives = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false, features = ["borsh", "serde"] , package="ibc-primitives" }
-ibc-core-host-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false, features = ["borsh", "serde"]}
+ibc-new-primitives = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false, features = ["borsh", "serde"], package = "ibc-primitives" }
+ibc-core-host-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false, features = ["borsh", "serde"] }
 ibc-core-handler-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false }
 ibc-core-client-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false }
 ibc-core-connection-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false }
@@ -97,7 +97,7 @@ ibc-app-transfer-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015
 ibc-core-commitment-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false }
 ibc-client-tendermint-types = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false }
 # ibc-testkit = { git = "https://github.com/mina86/ibc-rs", rev = "6015aea441d4660f7f7ecd89b5e770a993448089", default-features = false }
-ibc-proto-new = { version = "0.41.0", default-features = false, package="ibc-proto" }
+ibc-proto-new = { version = "0.41.0", default-features = false, package = "ibc-proto" }
 
 
 # substrate
