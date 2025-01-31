@@ -60,7 +60,10 @@ pub async fn get_timeout_proof_height(
 
 	match timeout_variant {
 		TimeoutVariant::Height => {
-			let start_height = packet.timeout_height;
+			let mut start_height = packet.timeout_height;
+			start_height.revision_height = start_height
+				.revision_height
+				.max(latest_client_height_on_source.revision_height.saturating_sub(10000));
 			find_suitable_proof_height_for_client(
 				sink,
 				source,
@@ -160,8 +163,11 @@ pub async fn get_timeout_proof_height(
 				(timeout_timestamp_relative.as_nanos() / sink.expected_block_time().as_nanos())
 					as u64)
 				.saturating_sub(1);
-			let start_height = Height::new(sink_height.revision_number, timeout_block_on_b)
+			let mut start_height = Height::new(sink_height.revision_number, timeout_block_on_b)
 				.min(packet.timeout_height);
+			start_height.revision_height = start_height
+				.revision_height
+				.max(latest_client_height_on_source.revision_height.saturating_sub(10000));
 
 			find_suitable_proof_height_for_client(
 				sink,
@@ -229,7 +235,7 @@ pub async fn verify_delay_passed(
 				actual_proof_height
 			);
 			let _cs = sink
-				.query_client_consensus(sink_height, source.client_id(), actual_proof_height)
+				.query_client_consensus(sink_height, source.client_id(), actual_proof_height, false)
 				.await
 				.unwrap()
 				.consensus_state

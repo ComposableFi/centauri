@@ -10,12 +10,13 @@ use anchor_client::{
 		pubkey::ParsePubkeyError,
 		signature::{Keypair, Signature},
 		signer::Signer as AnchorSigner,
+		system_instruction,
 		transaction::Transaction,
 	},
 	Client as AnchorClient, Cluster, Program,
 };
 use anchor_lang::{prelude::*, system_program};
-use anchor_spl::associated_token::get_associated_token_address;
+use anchor_spl::{associated_token::get_associated_token_address, token::spl_token};
 use core::{str::FromStr, time::Duration};
 use futures::future::join_all;
 use ibc::{
@@ -56,6 +57,12 @@ use crate::{
 };
 use solana_ibc::{
 	chain::ChainData, events::BlockFinalised, ix_data_account, storage::PrivateStorage,
+};
+use sqlx::{
+	database::HasArguments,
+	postgres::{PgConnectOptions, PgPoolOptions},
+	query::QueryAs,
+	ConnectOptions, Execute, Postgres,
 };
 use tendermint_new::vote::{SignedVote, ValidatorIndex};
 
@@ -123,6 +130,7 @@ pub struct SolanaClient {
 	// Sets whether to use JITO or RPC for submitting transactions
 	pub transaction_sender: TransactionSender,
 	pub hook_token_address: Option<String>,
+	pub pg_pool: sqlx::Pool<sqlx::Postgres>,
 }
 
 #[derive(std::fmt::Debug, Serialize, Deserialize, Clone)]
@@ -166,6 +174,7 @@ pub struct SolanaClientConfig {
 	pub trie_db_path: String,
 	pub transaction_sender: String,
 	pub hook_token_address: Option<String>,
+	pub indexer_pg_url: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -317,6 +326,27 @@ impl SolanaClient {
 		rusqlite::Connection::open(db_url).unwrap()
 	}
 
+	pub(crate) async fn query(
+		&self,
+		query: sqlx::query::Query<'_, sqlx::Postgres, sqlx::postgres::PgArguments>,
+	) -> Result<Vec<sqlx::postgres::PgRow>, Error> {
+		log::trace!(target: "hyperspace_solana", "query: {}", query.sql());
+		let rows = query.fetch_all(&self.pg_pool).await.map_err(|e| Error::from(e))?;
+		Ok(rows)
+	}
+
+	pub async fn query_as<
+		'a,
+		T: Send + Unpin + for<'r> sqlx::FromRow<'r, sqlx::postgres::PgRow>,
+	>(
+		&self,
+		query: QueryAs<'a, Postgres, T, <Postgres as HasArguments<'a>>::Arguments>,
+	) -> Result<Vec<T>, Error> {
+		log::trace!(target: "hyperspace_solana", "query: {}", query.sql());
+		let logs = query.fetch_all(&self.pg_pool).await?;
+		Ok(logs)
+	}
+
 	pub fn program(&self) -> Program<Arc<Keypair>> {
 		let anchor_client = self.client();
 		anchor_client.program(self.solana_ibc_program_id).unwrap()
@@ -337,6 +367,12 @@ impl SolanaClient {
 			"RPC" => TransactionSender::RPC,
 			_ => panic!("Invalid param transaction sender: Expected JITO/RPC"),
 		};
+		let mut connect_options: PgConnectOptions = config.indexer_pg_url.parse().unwrap();
+		let pg_pool = PgPoolOptions::new()
+			.max_connections(5000)
+			.connect_with(connect_options.disable_statement_logging())
+			.await
+			.expect("Unable to connect to the database");
 		Ok(Self {
 			name: config.name,
 			rpc_url: config.rpc_url.to_string(),
@@ -369,6 +405,7 @@ impl SolanaClient {
 			trie_db_path: config.trie_db_path,
 			transaction_sender,
 			hook_token_address: config.hook_token_address,
+			pg_pool,
 		})
 	}
 

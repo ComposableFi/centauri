@@ -358,6 +358,7 @@ where
 		at: Height,
 		client_id: ClientId,
 		consensus_height: Height,
+		include_proof: bool,
 	) -> Result<QueryConsensusStateResponse, Self::Error> {
 		let path_bytes = Path::ClientConsensusState(ClientConsensusStatePath {
 			client_id: client_id.clone(),

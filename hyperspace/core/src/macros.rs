@@ -122,17 +122,18 @@ macro_rules! chains {
 				at: Height,
 				client_id: ClientId,
 				consensus_height: Height,
+				include_proof: bool,
 			) -> Result<QueryConsensusStateResponse, Self::Error> {
 				match self {
 					$(
 						$(#[$($meta)*])*
 						Self::$name(chain) => chain
-							.query_client_consensus(at, client_id, consensus_height)
+							.query_client_consensus(at, client_id, consensus_height, include_proof)
 							.await
 							.map_err(AnyError::$name),
 					)*
 					AnyChain::Wasm(c) =>
-						c.inner.query_client_consensus(at, client_id, consensus_height).await,
+						c.inner.query_client_consensus(at, client_id, consensus_height, include_proof).await,
 				}
 			}
 

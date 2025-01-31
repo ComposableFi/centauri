@@ -140,6 +140,7 @@ impl IbcProvider for Client {
 		at: Height,
 		client_id: ClientId,
 		consensus_height: Height,
+		include_proof: bool,
 	) -> Result<QueryConsensusStateResponse, Self::Error> {
 		let args = (consensus_height, client_id, false);
 		let query =

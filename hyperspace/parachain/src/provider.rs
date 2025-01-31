@@ -185,6 +185,7 @@ where
 		at: Height,
 		client_id: ClientId,
 		consensus_height: Height,
+		include_proof: bool,
 	) -> Result<QueryConsensusStateResponse, Self::Error> {
 		let res = IbcApiClient::<u32, H256, <T as light_client_common::config::Config>::AssetId>::query_client_consensus_state(
 			&*self.para_ws_client,

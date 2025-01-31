@@ -277,6 +277,7 @@ pub trait IbcProvider {
 		at: Height,
 		client_id: ClientId,
 		consensus_height: Height,
+		include_proof: bool,
 	) -> Result<QueryConsensusStateResponse, Self::Error>;
 
 	/// Query client state with proof
@@ -773,7 +774,7 @@ pub async fn find_suitable_proof_height_for_client(
 ) -> Option<Height> {
 	log::info!(
 		target: "hyperspace",
-		"Searching for suitable proof height for client {} ({}) starting at {}, {:?}, latest_client_height={}",
+		"Searching for suitable proof height for client {} ({}) starting at {}, {:?}, latest_client_height={}, at = {at}",
 		client_id, sink.name(), start_height, timestamp_to_match, latest_client_height
 	);
 	let start_height = source.get_proof_height(start_height).await;
@@ -787,6 +788,7 @@ pub async fn find_suitable_proof_height_for_client(
 	// We use pure linear search because there's no valid comparison to be made and there might be
 	// missing values  for some heights
 	for height in start_height.revision_height..=latest_client_height.revision_height {
+		log::info!(target: "hyperspace", "Searching for proof height: {}", height);
 		let mut temp_height = Height::new(start_height.revision_number, height);
 
 		if sink
@@ -799,8 +801,9 @@ pub async fn find_suitable_proof_height_for_client(
 			continue;
 		}
 
-		let consensus_state =
-			sink.query_client_consensus(at, client_id.clone(), temp_height).await.map_err(|e| log::error!("Error querying consensus state: {}", e))
+		let consensus_state = sink
+			.query_client_consensus(at, client_id.clone(), temp_height, false)
+			.await
 			.ok();
 		let decoded = consensus_state
 			.map(|x| x.consensus_state.map(AnyConsensusState::try_from))
