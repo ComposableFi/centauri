@@ -2020,7 +2020,11 @@ deserialize client state"
 		if let Some(row) = rows.into_iter().next() {
 			// Extract the revision_number and revision_height
 			let revision_number: i64 = row.get("revision_number");
-			let revision_height: i64 = row.get("revision_height");
+			let mut revision_height: i64 = row.get("revision_height");
+			// FIXME: Hack to fix the revision_height for the 07-tendermint client
+			if client_id.as_str().contains("07-tendermint") {
+				revision_height -= 1;
+			}
 
 			log::info!(
 				"Fast proof search found matching consensus state: revision_number={}, revision_height={}",
