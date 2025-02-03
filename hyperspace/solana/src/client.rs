@@ -585,7 +585,7 @@ deserialize consensus state"
 						AccountMeta {
 							pubkey: anchor_lang::solana_program::sysvar::instructions::ID,
 							is_signer: false,
-							is_writable: true,
+							is_writable: false,
 						},
 						AccountMeta {
 							pubkey: system_program::ID,
