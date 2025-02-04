@@ -781,6 +781,15 @@ pub async fn find_suitable_proof_height_for_client(
 
 	if let Some(proof_height) = sink.fast_proof_search(client_id.clone(), source_delay_period).await
 	{
+		if proof_height < start_height {
+			info!(
+				"Fast proof search found proof height on {} as {} which is less than start height {}",
+				sink.name(),
+				proof_height,
+				start_height
+			);
+			return None;
+		}
 		info!("Fast proof search found proof height on {} as {}", sink.name(), proof_height);
 		return Some(proof_height)
 	}
